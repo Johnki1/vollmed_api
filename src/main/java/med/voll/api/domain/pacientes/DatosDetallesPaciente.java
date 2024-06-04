@@ -1,6 +1,6 @@
 package med.voll.api.domain.pacientes;
 
-import med.voll.api.domain.direccion.DatosDireccion;
+import med.voll.api.domain.direccion.Direccion;
 
 public record DatosDetallesPaciente(
         Long id,
@@ -8,6 +8,9 @@ public record DatosDetallesPaciente(
         String email,
         String telefono,
         String string,
-        DatosDireccion direccion
+        Direccion direccion
 ) {
+    public DatosDetallesPaciente(Paciente paciente) {
+        this(paciente.getId(), paciente.getNombre(), paciente.getEmail(), paciente.getDocumento(), paciente.getTelefono(), paciente.getDireccion());
+    }
 }

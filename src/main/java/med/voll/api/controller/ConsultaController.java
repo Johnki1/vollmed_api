@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import med.voll.api.domain.consulta.AgendaDeConsultaService;
 import med.voll.api.domain.consulta.DatosAgendarConsulta;
 import med.voll.api.domain.consulta.DatosDetalleConsulta;
+import med.voll.api.infra.errores.validacionDeIntegridad;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,9 +22,9 @@ public class ConsultaController {
 
     @PostMapping
     @Transactional
-    public ResponseEntity agendar(@RequestBody @Valid DatosAgendarConsulta datosAgendarConsulta){
+    public ResponseEntity agendar(@RequestBody @Valid DatosAgendarConsulta datosAgendarConsulta) throws validacionDeIntegridad {
 
-        agendaDeConsultaService.agendar(datosAgendarConsulta);
-        return ResponseEntity.ok(new DatosDetalleConsulta(null,null,null,null));
+        var response = agendaDeConsultaService.agendar(datosAgendarConsulta);
+        return ResponseEntity.ok(response);
     }
 }

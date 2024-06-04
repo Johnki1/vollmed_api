@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -12,17 +13,24 @@ public interface MedicoRepository extends JpaRepository <Medico, Long>{
 
     Page<Medico> findByActivoTrue(Pageable paginacion);
 
-    @Query("""
-            select m from Medico m
-            where m.activo =1 and
-            m.especialidad=:especialidad
-            m.id not in(
-            select c.medico.id from Consulta c
-            c.data=:fecha
+    @Query(value = """
+            SELECT m.* FROM medicos m
+            WHERE m.activo = 1
+            AND m.especialidad = :especialidad
+            AND m.id NOT IN (
+                SELECT c.medico_id FROM consultas c
+                WHERE c.data = :fecha
             )
-            order by rand()
-            limit 1
+            ORDER BY RAND()
+            LIMIT 1
+            """, nativeQuery = true)
+    Medico seleccionarMedicoConEspecialidadEnFecha(@Param("especialidad") Especialidad especialidad, @Param("fecha") LocalDateTime fecha);
+
+    @Query("""
+            select m.activo
+            from Medico m
+            where m.id=:idMedico
             """)
-    Medico seleccionarMedicoConEspecialidadEnFecha(Especialidad especialidad, LocalDateTime fecha);
+    Boolean findActivoById(Long idMedico);
 }
 
